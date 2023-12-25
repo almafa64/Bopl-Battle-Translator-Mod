@@ -9,7 +9,7 @@ using System.Reflection;
 using TMPro;
 using UnityEngine;
 
-namespace Translator
+namespace BoplTranslator
 {
 	internal static class LanguagePatch
 	{
@@ -122,15 +122,15 @@ namespace Translator
 		public static unsafe void Init()
 		{
 			_updateText = typeof(LocalizedText).GetMethod(nameof(LocalizedText.UpdateText));
-			Translator.harmonyInstance.Patch(_updateText, prefix: new HarmonyMethod(Utils.GetMethod(nameof(UpdateTextPatch))));
+			BoplTranslator.harmonyInstance.Patch(_updateText, prefix: new HarmonyMethod(Utils.GetMethod(nameof(UpdateTextPatch))));
 
 			_localTable = typeof(LocalizationTable).GetMethod(nameof(LocalizationTable.GetText));
-			Translator.harmonyInstance.Patch(_localTable, prefix: new HarmonyMethod(Utils.GetMethod(nameof(GetTextPatch))));
+			BoplTranslator.harmonyInstance.Patch(_localTable, prefix: new HarmonyMethod(Utils.GetMethod(nameof(GetTextPatch))));
 
 			MaxOGLanguage = Utils.MaxOfEnum<Language>();
 
 			// read languages
-			foreach (FileInfo file in Translator.translationsDir.EnumerateFiles())
+			foreach (FileInfo file in BoplTranslator.translationsDir.EnumerateFiles())
 			{
 				string[] words = new string[keys.Length];
 				languages.Add(words);

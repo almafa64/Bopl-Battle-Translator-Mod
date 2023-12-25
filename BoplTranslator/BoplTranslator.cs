@@ -9,9 +9,9 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Translator
+namespace BoplTranslator
 {
-	public class Translator : MelonMod
+	public class BoplTranslator : MelonMod
 	{
 		public static new HarmonyLib.Harmony harmonyInstance;
 		public static DirectoryInfo translationsDir;
@@ -118,20 +118,20 @@ namespace Translator
 
 		private void TryFindLastLanguage()
 		{
-			int index = languageNames.IndexOf(Translator.lastCustomLanguageCode.Value);
+			int index = languageNames.IndexOf(BoplTranslator.lastCustomLanguageCode.Value);
 			if (index != -1)
 			{
 				optionIndex = index;
 				langMenu.GetComponent<LanguageMenu>().SetLanguage(index + LanguagePatch.MaxOGLanguage + 1);
-				MelonLogger.Msg($"Found last used language \"{Translator.lastCustomLanguageCode.Value}\"");
+				MelonLogger.Msg($"Found last used language \"{BoplTranslator.lastCustomLanguageCode.Value}\"");
 			}
 			else
 			{
 				langMenu.GetComponent<LanguageMenu>().SetLanguage((int)Language.EN);
 				optionIndex = 0;
-				Translator.lastCustomLanguageCode.Value = languageNames[0];
-				Translator.category.SaveToFile();
-				MelonLogger.Error($"Couldn't find last used language \"{Translator.lastCustomLanguageCode.Value}\"");
+				BoplTranslator.lastCustomLanguageCode.Value = languageNames[0];
+				BoplTranslator.category.SaveToFile();
+				MelonLogger.Error($"Couldn't find last used language \"{BoplTranslator.lastCustomLanguageCode.Value}\"");
 			}
 		}
 
@@ -147,9 +147,9 @@ namespace Translator
 					MelonLogger.Warning($"Language number {optionIndex} was selected, but no language with that number exists");
 					TryFindLastLanguage();
 				}
-				else if (languageNames[optionIndex] != Translator.lastCustomLanguageCode.Value)
+				else if (languageNames[optionIndex] != BoplTranslator.lastCustomLanguageCode.Value)
 				{
-					MelonLogger.Warning($"last language wasn't \"{languageNames[optionIndex]}\", it was \"{Translator.lastCustomLanguageCode.Value}\"");
+					MelonLogger.Warning($"last language wasn't \"{languageNames[optionIndex]}\", it was \"{BoplTranslator.lastCustomLanguageCode.Value}\"");
 					TryFindLastLanguage();
 				}
 
@@ -196,8 +196,8 @@ namespace Translator
 				GameObject.Find("mainMenu_leaveACTIVE").GetComponent<MainMenu>().EnableAll();
 				langMenu.GetComponent<MainMenu>().DisableAll();
 				AudioManager.Get().Play("return3");
-				Translator.lastCustomLanguageCode.Value = languageNames[optionIndex];
-				Translator.category.SaveToFile();
+				BoplTranslator.lastCustomLanguageCode.Value = languageNames[optionIndex];
+				BoplTranslator.category.SaveToFile();
 			}
 		}
 	}

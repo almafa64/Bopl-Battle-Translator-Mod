@@ -7,8 +7,8 @@
     <ProjectGuid>{0FD40813-1CA4-4E93-89C1-4681E8BC21AF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Translator</RootNamespace>
-    <AssemblyName>Translator</AssemblyName>
+    <RootNamespace>BoplTranslator</RootNamespace>
+    <AssemblyName>BoplTranslator</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -70,14 +70,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="LanguagePatch.cs" />
-    <Compile Include="Translator.cs" />
+    <Compile Include="BoplTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\Utils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>@ECHO OFF
-:a
-copy /y "$(TargetPath)" "$(TargetDir)..\..\..\..\..\Mods" || goto a</PostBuildEvent>
-  </PropertyGroup>
 </Project>

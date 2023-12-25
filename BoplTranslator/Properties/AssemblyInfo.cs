@@ -4,7 +4,7 @@ using System.Reflection;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: MelonInfo(typeof(Translator.Translator), "Bopl Battle Translator Mod", "1.0.0", "almafa64", "https://github.com/almafa64/BoplTranslator")]
+[assembly: MelonInfo(typeof(BoplTranslator.BoplTranslator), "Bopl Battle Translator Mod", "1.0.0", "almafa64", "https://github.com/almafa64/BoplTranslator")]
 [assembly: MelonGame("Johan Gronvall", "BoplBattle")]
 [assembly: AssemblyTitle("Bopl Battle Translator Mod")]
 [assembly: AssemblyDescription("Adds option for using custom langauges in Bopl Battle")]
