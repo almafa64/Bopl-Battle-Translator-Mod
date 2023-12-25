@@ -1,9 +1,10 @@
-﻿using Harmony;
-using HarmonyLib;
+﻿using HarmonyLib;
 using MelonLoader;
+using MelonLoader.Utils;
 using System;
 using System.Collections.Generic;
-using System.Runtime;
+using System.IO;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -14,10 +15,17 @@ namespace Translator
 	public class Translator : MelonMod
 	{
 		public static new HarmonyLib.Harmony harmonyInstance;
+		public static DirectoryInfo translationsDir;
+		public static MelonPreferences_Category category;
+		public static MelonPreferences_Entry<string> lastCustomLanguageCode;
 
 		public override void OnInitializeMelon()
 		{
 			harmonyInstance = HarmonyInstance;
+			translationsDir = new DirectoryInfo(Path.Combine(MelonEnvironment.ModsDirectory, "BoplTranslator"));
+			translationsDir.Create();
+			category = MelonPreferences.CreateCategory("BoplTranslator");
+			lastCustomLanguageCode = category.CreateEntry("last_custom_language_code", "");
 
 			try
 			{
@@ -33,6 +41,11 @@ namespace Translator
 		{
 			if(sceneName == "MainMenu")
 			{
+				if (LanguagePatch.languages.Count == 0)
+				{
+					if ((int)Settings.Get().Language > Utils.MaxOfEnum<Language>()) Settings.Get().Language = 0;
+					return;
+				}
 				GameObject langMenu = GameObject.Find("LanguageMenu_leaveACTIVE");
 				int lastOGLanguage = langMenu.transform.childCount - 1;
 				GameObject langArrowsParent = UnityEngine.Object.Instantiate(GameObject.Find("Resolution"));
@@ -51,20 +64,25 @@ namespace Translator
 
 				UnityEngine.Object.Destroy(lang.GetComponent<OptionsButton>());
 				LanguageSelector selector = lang.AddComponent<LanguageSelector>();
-				selector.Init();
-				selector.langMenu = langMenu;
-
 				// add readed languages
-				selector.languages.Add("HU");
-				selector.languages.Add("Convex");
-				selector.languages.Add("Nig");
+				foreach (string[] words in LanguagePatch.languages)
+				{
+					selector.languageNames.Add(words[0]);
+				}
+				if (lastCustomLanguageCode.Value == "")
+				{
+					lastCustomLanguageCode.Value = selector.languageNames[0];
+					category.SaveToFile();
+				}
+				selector.langMenu = langMenu;
+				selector.Init();
 
 				MainMenu menu = langMenu.GetComponent<MainMenu>();
 				menu.ConfiguredMenuItems.Add(lang);
 				Traverse menuTraverse = Traverse.Create(menu);
 				menuTraverse.Field("Indices").GetValue<List<int>>().Add(0);
 				menuTraverse.Field("MenuItemTransforms").GetValue<List<RectTransform>>().Add(lang.GetComponent<RectTransform>());
-				menuTraverse.Field("MenuItems").GetValue<List<IMenuItem>>().Add(lang.GetComponent<LanguageSelector>());
+				menuTraverse.Field("MenuItems").GetValue<List<IMenuItem>>().Add(lang.GetComponent<OptionsButton>()); // bs but works
 
 				List<Vector2> poses = menuTraverse.Field("originalMenuItemPositions").GetValue<List<Vector2>>();
 				float diff = poses[0].y - poses[2].y;
@@ -94,16 +112,47 @@ namespace Translator
 		private BindInputAxisToButton[] InputArrows;
 		public int optionIndex { get; private set; } = 0;
 		public TextMeshProUGUI textMesh;
-		public List<string> languages = new List<string>();
+		public List<string> languageNames = new List<string>();
 		public GameObject langMenu;
+
+		private void TryFindLastLanguage()
+		{
+			int index = languageNames.IndexOf(Translator.lastCustomLanguageCode.Value);
+			if (index != -1)
+			{
+				optionIndex = index;
+				langMenu.GetComponent<LanguageMenu>().SetLanguage(index + LanguagePatch.MaxOGLanguage + 1);
+				MelonLogger.Msg($"Found last used language \"{Translator.lastCustomLanguageCode.Value}\"");
+			}
+			else
+			{
+				langMenu.GetComponent<LanguageMenu>().SetLanguage((int)Language.EN);
+				optionIndex = 0;
+				Translator.lastCustomLanguageCode.Value = languageNames[0];
+				Translator.category.SaveToFile();
+				MelonLogger.Error($"Couldn't find last used language \"{Translator.lastCustomLanguageCode.Value}\"");
+			}
+		}
 
 		public void Init()
 		{
 			optionIndex = (int)Settings.Get().Language;
-			int max = Utils.MaxOfEnum<Language>();
-			if (optionIndex > max) optionIndex = optionIndex - max - 1;
-			else optionIndex = 0;
-
+			if (optionIndex <= LanguagePatch.MaxOGLanguage) optionIndex = 0;
+			else
+			{
+				optionIndex = optionIndex - LanguagePatch.MaxOGLanguage - 1;
+				if (optionIndex >= languageNames.Count)
+				{
+					MelonLogger.Warning($"Language number {optionIndex} was selected, but no language with that number exists");
+					TryFindLastLanguage();
+				}
+				else if (languageNames[optionIndex] != Translator.lastCustomLanguageCode.Value)
+				{
+					MelonLogger.Warning($"last language wasn't \"{languageNames[optionIndex]}\", it was \"{Translator.lastCustomLanguageCode.Value}\"");
+					TryFindLastLanguage();
+				}
+				
+			}
 			InputArrows = GetComponentsInChildren<BindInputAxisToButton>();
 			textMesh = GetComponentInChildren<TextMeshProUGUI>();
 			textMesh.font = LocalizedText.localizationTable.enFontAsset;
@@ -119,7 +168,7 @@ namespace Translator
 
 		private void Update()
 		{
-			textMesh.text = languages[optionIndex];
+			textMesh.text = languageNames[optionIndex];
 			for (int i = 0; i < InputArrows.Length; i++)
 			{
 				InputArrows[i].enabled = InputActive;
@@ -128,13 +177,13 @@ namespace Translator
 
 		public void Next()
 		{
-			optionIndex = (optionIndex + 1) % languages.Count;
+			optionIndex = (optionIndex + 1) % languageNames.Count;
 			Update();
 		}
 
 		public void Previous()
 		{
-			optionIndex = (optionIndex - 1 + languages.Count) % languages.Count;
+			optionIndex = (optionIndex - 1 + languageNames.Count) % languageNames.Count;
 			Update();
 		}
 
@@ -142,10 +191,12 @@ namespace Translator
 		{
 			if (InputActive && isActiveAndEnabled)
 			{
-				langMenu.GetComponent<LanguageMenu>().SetLanguage(Utils.MaxOfEnum<Language>() + 1 + optionIndex);
+				langMenu.GetComponent<LanguageMenu>().SetLanguage(LanguagePatch.MaxOGLanguage + 1 + optionIndex);
 				GameObject.Find("mainMenu_leaveACTIVE").GetComponent<MainMenu>().EnableAll();
 				langMenu.GetComponent<MainMenu>().DisableAll();
 				AudioManager.Get().Play("return3");
+				Translator.lastCustomLanguageCode.Value = languageNames[optionIndex];
+				Translator.category.SaveToFile();
 			}
 		}
 	}
