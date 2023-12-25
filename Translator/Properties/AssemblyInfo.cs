@@ -1,26 +1,15 @@
 ﻿using MelonLoader;
-using Translator;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: MelonInfo(typeof(Translator.Translator), "Bopl Battle Translator Mod", "7.0.0-Cutie", "almafa64", null)]
+[assembly: MelonInfo(typeof(Translator.Translator), "Bopl Battle Translator Mod", "1.0.0", "almafa64", "https://github.com/almafa64/BoplTranslator")]
 [assembly: MelonGame("Johan Gronvall", "BoplBattle")]
-[assembly: AssemblyTitle("Bopl Battle Translator")]
-[assembly: AssemblyDescription("Adds option for using custom langauges")]
+[assembly: AssemblyTitle("Bopl Battle Translator Mod")]
+[assembly: AssemblyDescription("Adds option for using custom langauges in Bopl Battle")]
 [assembly: AssemblyCompany("TheMoonBase")]
-[assembly: AssemblyProduct("Bopl Battle Translator")]
-
-// Setting ComVisible to false makes the types in this assembly not visible
-// to COM components.  If you need to access a type in this assembly from
-// COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
-
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("62cba467-cba0-407d-9e4e-38056aa1a799")]
+[assembly: AssemblyProduct("Bopl Battle Translator Mod")]
 
 // Version information for an assembly consists of the following four values:
 //
