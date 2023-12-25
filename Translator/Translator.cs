@@ -4,7 +4,6 @@ using MelonLoader.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -39,7 +38,7 @@ namespace Translator
 
 		public override void OnSceneWasInitialized(int buildIndex, string sceneName)
 		{
-			if(sceneName == "MainMenu")
+			if (sceneName == "MainMenu")
 			{
 				if (LanguagePatch.languages.Count == 0)
 				{
@@ -92,11 +91,13 @@ namespace Translator
 				CallOnHover call = lang.GetComponent<CallOnHover>();
 				UnityEvent hover = call.onHover;
 				hover.RemoveAllListeners();
-				hover.AddListener(() => {
+				hover.AddListener(() =>
+				{
 					menu.Select(14);
 					selector.InputActive = true;
 				});
-				call.onExitHover.AddListener(() => {
+				call.onExitHover.AddListener(() =>
+				{
 					selector.InputActive = false;
 				});
 				UnityEvent click = call.onClick;
@@ -151,7 +152,7 @@ namespace Translator
 					MelonLogger.Warning($"last language wasn't \"{languageNames[optionIndex]}\", it was \"{Translator.lastCustomLanguageCode.Value}\"");
 					TryFindLastLanguage();
 				}
-				
+
 			}
 			InputArrows = GetComponentsInChildren<BindInputAxisToButton>();
 			textMesh = GetComponentInChildren<TextMeshProUGUI>();

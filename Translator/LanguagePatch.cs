@@ -123,14 +123,14 @@ namespace Translator
 		{
 			_updateText = typeof(LocalizedText).GetMethod(nameof(LocalizedText.UpdateText));
 			Translator.harmonyInstance.Patch(_updateText, prefix: new HarmonyMethod(Utils.GetMethod(nameof(UpdateTextPatch))));
-			
+
 			_localTable = typeof(LocalizationTable).GetMethod(nameof(LocalizationTable.GetText));
 			Translator.harmonyInstance.Patch(_localTable, prefix: new HarmonyMethod(Utils.GetMethod(nameof(GetTextPatch))));
 
 			MaxOGLanguage = Utils.MaxOfEnum<Language>();
 
 			// read languages
-			foreach(FileInfo file in Translator.translationsDir.EnumerateFiles())
+			foreach (FileInfo file in Translator.translationsDir.EnumerateFiles())
 			{
 				string[] words = new string[keys.Length];
 				languages.Add(words);
@@ -141,7 +141,7 @@ namespace Translator
 					string key = splitted[0].Trim();
 					string value = splitted[1].Trim().Replace("\\n", "\n");
 					int index = Array.FindIndex(keys, e => e.Equals(key));
-					if(index == -1) continue;
+					if (index == -1) continue;
 					words[index] = value;
 				}
 				for (int i = 0; i < words.Length; i++)
