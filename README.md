@@ -11,6 +11,7 @@ Click [this link](https://melonwiki.xyz/) to get started!
 **MelonLoader Version**: 0.6.0+
 
 ## Default values for english
+(this file goes into &lt;Bopl path&gt;\\Mods\\BoplTranslator\\)
 ```
 menu_language = EN
 menu_play = play
