@@ -9,7 +9,7 @@ Click [this link](https://melonwiki.xyz/) to get started!
 ## General Info
 This was my first attempt at modding a Unity game (and modding in general), and this is why i chose this game, it's not secured, uses Mono and small.
 
-Feel free to add new translations into the **Translations** folder
+Feel free to add new translations into the **Translations** folder with pull request
 
 ## Mod Info
 **Mod Version**: v1.0.0<br>
