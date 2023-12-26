@@ -6,6 +6,11 @@ Using **MelonLoader**, this mod adds custom language support for [Bopl Battle](h
 Need to install MelonLoader?<br>
 Click [this link](https://melonwiki.xyz/) to get started!
 
+## General Info
+This was my first attempt at modding a Unity game (and modding in general), and this is why i chose this game, it's not secured, uses Mono and small.
+
+Feel free to add new translations into the **Translations** folder
+
 ## Mod Info
 **Mod Version**: v1.0.0<br>
 **MelonLoader Version**: 0.6.0+
